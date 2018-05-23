@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>音乐播放器</title>
     <link rel="stylesheet" href="//at.alicdn.com/t/font_448304_47new50n1nabgldi.css">
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
     <style>
         * {
             padding: 0;
@@ -181,6 +182,15 @@
         .icon-right {
             right: -8vh;
         }
+        .box {
+            overflow: hidden;
+        }
+        .box>ul {
+            position: relative;
+            top: 0;
+            left: 0;
+            transition: all .4s;
+        }
         .box>ul>li {
             float: left;
             list-style: none;
@@ -211,9 +221,9 @@
         <div class="aside">
             <figure></figure>
             <div class="actions">
-                <span class="iconfont icon-heart"></span>
-                <span class="iconfont icon-play"></span>
-                <span class="iconfont icon-next"></span>
+                <span class="iconfont icon-heart btn-collect"></span>
+                <span class="iconfont icon-play btn-play"></span>
+                <span class="iconfont icon-next btn-next"></span>
             </div>
         </div>
         <div class="detail">
@@ -238,16 +248,79 @@
         <div class="layout">
             <span class="iconfont icon-left"></span>
             <div class="box">
-                <ul class="clearfix">
-                    <li><img class="cover" src="http://cloud.hunger-valley.com/17-10-24/1906806.jpg-small"><h3>我的最爱</h3></li>
-                    <li><img class="cover" src="http://cloud.hunger-valley.com/music/public_tuijian_suibiantingting.jpg-small"><h3>随便听听</h3></li>
-                    <li><img class="cover" src="http://cloud.hunger-valley.com/17-10-24/1906806.jpg-small"><h3>我的最爱</h3></li>
-                    <li><img class="cover" src="http://cloud.hunger-valley.com/music/public_tuijian_suibiantingting.jpg-small"><h3>随便听听</h3></li>
-                    <li><img class="cover" src="http://cloud.hunger-valley.com/17-10-24/1906806.jpg-small"><h3>我的最爱</h3></li>
-                </ul>
+                <ul class="clearfix"></ul>
             </div>
             <span class="iconfont icon-right"></span>
         </div>
     </footer>
 </body>
+<script src="index.js"></script>
+<!--<script>-->
+    <!--var Footer = {-->
+        <!--init: function () {-->
+            <!--this.$footer = $('footer');-->
+            <!--this.$ul = $('footer ul');-->
+            <!--this.render();-->
+
+        <!--},-->
+        <!--bind: function () {-->
+            <!--$('.icon-left').click(function() {-->
+                <!--// 如果有上一页，则向左翻页-->
+            <!--});-->
+            <!--$('.icon-right').click(function() {-->
+                <!--console.log(666)-->
+                <!--// 如果有下一页，则向右翻页，翻整数块-->
+                <!--var maxWidth = this.$footer.outerWidth(true),-->
+                    <!--width = this.$footer.find('li').outerWidth(true),-->
+                    <!--offset = Math.floor(maxWidth/width);-->
+                <!--console.log(offset);-->
+                <!--this.$ul.css({left: -offset + 'px'});-->
+            <!--})-->
+        <!--},-->
+        <!--render: function () {-->
+            <!--var _this = this;-->
+            <!--$.getJSON('//jirenguapi.applinzi.com/fm/getChannels.php')-->
+                <!--.done(function(res){-->
+                    <!--console.log(res)-->
+                    <!--_this.renderFooter(res.channels)-->
+                <!--}).fail(function(){-->
+                    <!--console.log('footer data get error')-->
+                <!--})-->
+        <!--},-->
+        <!--renderFooter: function(channels) {-->
+            <!--/*-->
+
+            <!--channel_id-->
+            <!--:-->
+            <!--"public_tuijian_spring"-->
+            <!--cover_big-->
+            <!--:-->
+            <!--"http://cloud.hunger-valley.com/music/public_tuijian_spring.jpg-big"-->
+            <!--cover_middle-->
+            <!--:-->
+            <!--"http://cloud.hunger-valley.com/music/public_tuijian_spring.jpg-middle"-->
+            <!--cover_small-->
+            <!--:-->
+            <!--"http://cloud.hunger-valley.com/music/public_tuijian_spring.jpg-small"-->
+            <!--name-->
+            <!--:-->
+            <!--"漫步春天"-->
+             <!--*/-->
+            <!--var html = '';-->
+            <!--channels.forEach(function(channel) {-->
+                <!--html += '<li data-id="\'+ channel.channel_id +\'" data-name="\'+ channel.name +\'">' +-->
+                    <!--'<img class="cover" src="'+ channel.cover_small +'"><h3>'+ channel.name +'</h3></li>'-->
+            <!--});-->
+            <!--this.$ul.html(html);-->
+            <!--this.setWidth();-->
+        <!--},-->
+        <!--setWidth: function () {-->
+            <!--var liArr = this.$footer.find('li'),-->
+                <!--count = liArr.length,-->
+                <!--width = liArr.outerWidth(true);-->
+            <!--this.$ul.css({'width': count*width + 'px'});-->
+        <!--}-->
+    <!--}-->
+    <!--Footer.init();-->
+<!--</script>-->
 </html>
