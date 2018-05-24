@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>音乐播放器</title>
+    <meta name="referrer" content="never">
     <link rel="stylesheet" href="//at.alicdn.com/t/font_448304_47new50n1nabgldi.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.2/animate.min.css">
     <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
     <style>
         * {
@@ -126,12 +128,15 @@
             margin-right: 1vh;
             font-size: 3vh;
         }
+        .btn-collect.active {
+            color: red;
+        }
         .bar-area {
             margin-top: 10vh;
             display: flex;
             align-items: center;
         }
-        .process-bar {
+        .progress-bar {
             position: relative;
             top: 0;
             left: 0;
@@ -139,7 +144,7 @@
             height: .8vh;
             background-color: rgba(255, 255, 255, 0.4);
         }
-        .process {
+        .progress {
             position: absolute;
             top: 0;
             left: 0;
@@ -196,11 +201,11 @@
             list-style: none;
             width: 20vh;
             height: 20vh;
-            margin: 2vh 2vh 0 2vh;
+            margin: 2vh;
             text-align: center;
             cursor: pointer;
         }
-        .box>ul>li:hover {
+        .box>ul>li:hover, .box>ul>li.active {
             box-shadow: 0 0 0.5vh 0.5vh rgba(255,255,255,0.8);
         }
         .cover {
@@ -212,6 +217,10 @@
             font-size: 2vh;
             color: rgba(255,255,255,0.6);
             margin-top: 1vh;
+        }
+        .boomText{
+            opacity: 0;
+            display: inline-block;
         }
     </style>
 </head>
@@ -235,8 +244,8 @@
                 <li><span class="iconfont icon-like"></span>2333</li>
             </ul>
             <div class="bar-area">
-                <div class="process-bar">
-                    <div class="process"></div>
+                <div class="progress-bar">
+                    <div class="progress"></div>
                 </div>
                 <span class="time">00:00</span>
             </div>
@@ -254,73 +263,249 @@
         </div>
     </footer>
 </body>
-<script src="index.js"></script>
-<!--<script>-->
-    <!--var Footer = {-->
-        <!--init: function () {-->
-            <!--this.$footer = $('footer');-->
-            <!--this.$ul = $('footer ul');-->
-            <!--this.render();-->
+<script>
+    // 事件触发监听中控
+    var EventCenter = {
+        on: function(type, handle) {
+            $(document).on(type, handle);
+        },
+        fire: function (type, data) {
+            $(document).trigger(type, data);
+        }
+    };
+    // 写一个jq插件，https://github.com/daneden/animate.css
+    $.fn.boomText = function (type) {
+        type = type || 'rollIn';
+        // 将文本拆成一个个字，然后每个字加动画
+        this.html(function(){
+            var arr = $(this).text()
+                .split('').map(function(word){
+                    return '<span class="boomText">'+ word + '</span>'
+                });
+            return arr.join('');
+        });
 
-        <!--},-->
-        <!--bind: function () {-->
-            <!--$('.icon-left').click(function() {-->
-                <!--// 如果有上一页，则向左翻页-->
-            <!--});-->
-            <!--$('.icon-right').click(function() {-->
-                <!--console.log(666)-->
-                <!--// 如果有下一页，则向右翻页，翻整数块-->
-                <!--var maxWidth = this.$footer.outerWidth(true),-->
-                    <!--width = this.$footer.find('li').outerWidth(true),-->
-                    <!--offset = Math.floor(maxWidth/width);-->
-                <!--console.log(offset);-->
-                <!--this.$ul.css({left: -offset + 'px'});-->
-            <!--})-->
-        <!--},-->
-        <!--render: function () {-->
-            <!--var _this = this;-->
-            <!--$.getJSON('//jirenguapi.applinzi.com/fm/getChannels.php')-->
-                <!--.done(function(res){-->
-                    <!--console.log(res)-->
-                    <!--_this.renderFooter(res.channels)-->
-                <!--}).fail(function(){-->
-                    <!--console.log('footer data get error')-->
-                <!--})-->
-        <!--},-->
-        <!--renderFooter: function(channels) {-->
-            <!--/*-->
+        var index = 0;
+        var $boomTexts = $(this).find('span');
+        var clock = setInterval(function(){
+            $boomTexts.eq(index).addClass('animated ' + type);
+            index++;
+            if(index >= $boomTexts.length){
+                clearInterval(clock);
+            }
+        }, 300);
+    };
 
-            <!--channel_id-->
-            <!--:-->
-            <!--"public_tuijian_spring"-->
-            <!--cover_big-->
-            <!--:-->
-            <!--"http://cloud.hunger-valley.com/music/public_tuijian_spring.jpg-big"-->
-            <!--cover_middle-->
-            <!--:-->
-            <!--"http://cloud.hunger-valley.com/music/public_tuijian_spring.jpg-middle"-->
-            <!--cover_small-->
-            <!--:-->
-            <!--"http://cloud.hunger-valley.com/music/public_tuijian_spring.jpg-small"-->
-            <!--name-->
-            <!--:-->
-            <!--"漫步春天"-->
-             <!--*/-->
-            <!--var html = '';-->
-            <!--channels.forEach(function(channel) {-->
-                <!--html += '<li data-id="\'+ channel.channel_id +\'" data-name="\'+ channel.name +\'">' +-->
-                    <!--'<img class="cover" src="'+ channel.cover_small +'"><h3>'+ channel.name +'</h3></li>'-->
-            <!--});-->
-            <!--this.$ul.html(html);-->
-            <!--this.setWidth();-->
-        <!--},-->
-        <!--setWidth: function () {-->
-            <!--var liArr = this.$footer.find('li'),-->
-                <!--count = liArr.length,-->
-                <!--width = liArr.outerWidth(true);-->
-            <!--this.$ul.css({'width': count*width + 'px'});-->
-        <!--}-->
-    <!--}-->
-    <!--Footer.init();-->
-<!--</script>-->
+    var Footer = {
+        init: function () {
+            this.$footer = $('footer');
+            this.$box = this.$footer.find('.box');
+            this.$ul = $('footer ul');
+            this.$leftBtn = $('.icon-left');
+            this.$rightBtn = $('.icon-right');
+            console.log(this.$rightBtn);
+            this.render();
+            this.bind();
+
+        },
+        bind: function () {
+            var _this = this;
+            this.$leftBtn.click(function() {
+                // 如果有上一页，则向左翻页
+                var maxWidth = _this.$box.width(),
+                    width = _this.$box.find('li').outerWidth(true),
+                    offset = Math.floor(maxWidth/width) * width;
+                console.log(offset);
+                if (parseFloat(_this.$ul.css('left')) + parseFloat(offset) <= 0) {
+                    _this.$ul.css({left: '+=' + offset + 'px'});
+                }
+            });
+            this.$rightBtn.click(function() {
+                // 如果有下一页，则向右翻页，翻整数块
+                var maxWidth = _this.$box.width(),
+                    width = _this.$box.find('li').outerWidth(true),
+                    offset = Math.floor(maxWidth/width) * width;
+                console.log(parseFloat(_this.$ul.css('left')), maxWidth, parseFloat(_this.$ul.css('width')));
+                if (-parseFloat(_this.$ul.css('left')) + parseFloat(maxWidth) < parseFloat(_this.$ul.css('width'))) {
+                    _this.$ul.css({'left': '-=' + offset + 'px'});
+                }
+            });
+            this.$box.on('click', 'li', function () {
+                var $this = $(this);
+                $this.addClass('active')
+                    .siblings()
+                    .removeClass('active');
+                EventCenter.fire('select-albumn', {
+                    channelId: $this.attr('data-id'),
+                    channelName: $this.attr('data-name')
+                });
+            })
+        },
+        render: function () {
+            var _this = this;
+            $.getJSON('//jirenguapi.applinzi.com/fm/getChannels.php')
+                .done(function(res){
+                    console.log(res)
+                    _this.renderFooter(res.channels)
+                }).fail(function(){
+                    console.log('footer data get error')
+                })
+        },
+        renderFooter: function(channels) {
+            var html = '';
+            channels.forEach(function(channel) {
+                html += '<li data-id="'+ channel.channel_id +'" data-name="'+ channel.name +'">' +
+                    '<img class="cover" src="'+ channel.cover_small +'"><h3>'+ channel.name +'</h3></li>'
+            });
+            this.$ul.html(html);
+            this.setWidth();
+        },
+        setWidth: function () {
+            var liArr = this.$footer.find('li'),
+                count = liArr.length,
+                width = liArr.outerWidth(true);
+            this.$ul.css({'width': count*width + 'px'});
+        }
+    };
+    var App = {
+        init: function () {
+            this.channelId = 'public_shiguang_80hou';
+            this.channelName = '第二人生';
+            this.$collectBtn = $('.btn-collect');
+            this.$playBtn = $('.btn-play');
+            this.$nextBtn = $('.btn-next');
+            this.$container = $('main');
+            this.audio = new Audio();
+            this.clock = null;
+            this.song = {};
+            this.lyricObj = {};
+
+            // this.loadSong();
+            this.bind();
+            EventCenter.fire('select-albumn', {
+                channelId: 'public_shiguang_90hou',
+                channelName: '第二人生'
+            })
+        },
+        // 如果点击先获取和设置当前歌曲信息，包括初始化歌词
+        // render背景等
+        // 播放音频，开始歌词动画
+        bind: function () {
+            var _this = this;
+            this.$playBtn.on('click', function () {
+                var $this = $(this);
+                if($this.hasClass('icon-play')) {
+                    $this.removeClass('icon-play').addClass('icon-pause');
+                    _this.audio.play();
+                } else {
+                    $this.removeClass('icon-pause').addClass('icon-play');
+                    _this.audio.pause();
+                }
+            });
+            this.$nextBtn.on('click', function () {
+                _this.loadSong();
+            });
+            this.$collectBtn.on('click', function () {
+                var $this = $(this);
+                if($this.hasClass('active')) {
+                    $this.removeClass('active');
+                } else {
+                    $this.addClass('active');
+                }
+            });
+
+            this.audio.addEventListener('play', function () {
+                clearInterval(_this.clock);
+                _this.clock = setInterval(function () {
+                    _this.updateState();
+                    _this.loadLyricAnimate()
+                }, 1000);
+            });
+            this.audio.addEventListener('pause', function () {
+                clearInterval(_this.clock);
+            });
+            this.audio.addEventListener('end', function () {
+                console.log('end');
+                _this.loadSong();
+            });
+            EventCenter.on('select-albumn', function(e, channel){
+                console.log('select ', channel);
+                _this.channelId = channel.channelId;
+                _this.channelName = channel.channelName;
+                _this.loadSong();
+            })
+        },
+        loadSong: function () {
+            var _this = this;
+            $.getJSON('//jirenguapi.applinzi.com/fm/getSong.php', {channel: this.channelId})
+                .done(function(res){
+                    if (res.song[0]) {
+                        _this.song = res.song[0];
+                        _this.audio.src = _this.song.url;
+                        _this.getLyric(_this.song.sid);
+                        _this.play();
+                    }
+                })
+        },
+        getLyric: function (sid) {
+            var _this = this;
+            $.getJSON('//jirenguapi.applinzi.com/fm/getLyric.php', {sid: sid})
+                .done(function(res){
+                    _this.setLyric(res.lyric);
+                })
+        },
+        setLyric: function (lyric) {
+            var _this = this;
+            lyric.split('\n').forEach(function (line) {
+                var timeArr = line.match(/\d{2}:\d{2}/g);
+                if(timeArr) {
+                    timeArr.forEach(function (time) {
+                        _this.lyricObj[time] = line.replace(/\[.+?\]/g, '');
+                        console.log('line', line,  _this.lyricObj[time], time);
+                    });
+                }
+            })
+        },
+        play: function () {
+            this.render();
+            this.playAudio();
+        },
+        render: function () {
+            this.$container.find('.aside figure').css('background-image','url('+this.song.picture +')');
+            $('.bg').css('background-image','url('+this.song.picture +')');
+            this.$container.find('h1').text(this.song.title);
+            this.$container.find('.author').text(this.song.artist);
+            this.$container.find('.tag').text(this.channelName);
+
+            // if(this.collections[song.sid]){
+            //     this.$container.find('.btn-collect').addClass('active');
+            // }else{
+            //     this.$container.find('.btn-collect').removeClass('active');
+            // }
+        },
+        playAudio: function () {
+            this.$container.find('.btn-play').removeClass('icon-play').addClass('icon-pause');
+            if(this.audio.src) {
+                this.audio.play();
+            }
+
+        },
+        loadLyricAnimate: function () {
+            var time = '0' + Math.floor(this.audio.currentTime/60) + ':' + (Math.floor(this.audio.currentTime)%60/100).toFixed(2).substr(2);
+            console.log('time', this.audio.currentTime, time);
+            if(this.lyricObj && this.lyricObj[time]) {
+                this.$container.find('.lyric').text(this.lyricObj[time]).boomText();
+            }
+        },
+        updateState: function(){
+            var timeStr = Math.floor(this.audio.currentTime/60)+':'
+                + (Math.floor(this.audio.currentTime)%60/100).toFixed(2).substr(2);
+            this.$container.find('.time').text(timeStr);
+            this.$container.find('.progress').css('width', this.audio.currentTime/this.audio.duration * 100 + '%');
+        }
+    };
+
+    Footer.init();
+    App.init();
+</script>
 </html>
